@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  assignment:
+    build: .
+    container_name: assign4
+    depends_on:
+      - mongodb
+    networks:
+      - mongo-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mongo-network
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    
+    depends_on: 
+      - assignment
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "80:80"
+    networks:
+      - mongo-network
+volumes:
+  mongo-data:
+    driver: local
+networks:
+  mongo-network:
+    driver: bridge
